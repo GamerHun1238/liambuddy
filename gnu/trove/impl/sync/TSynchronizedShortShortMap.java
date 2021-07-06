@@ -1,0 +1,182 @@
+package gnu.trove.impl.sync;
+
+import gnu.trove.TShortCollection;
+import gnu.trove.function.TShortFunction;
+import gnu.trove.iterator.TShortShortIterator;
+import gnu.trove.map.TShortShortMap;
+import gnu.trove.procedure.TShortProcedure;
+import gnu.trove.procedure.TShortShortProcedure;
+import gnu.trove.set.TShortSet;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Map;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class TSynchronizedShortShortMap
+  implements TShortShortMap, Serializable
+{
+  private static final long serialVersionUID = 1978198479659022715L;
+  private final TShortShortMap m;
+  final Object mutex;
+  
+  public TSynchronizedShortShortMap(TShortShortMap m)
+  {
+    if (m == null)
+      throw new NullPointerException();
+    this.m = m;
+    mutex = this;
+  }
+  
+  public TSynchronizedShortShortMap(TShortShortMap m, Object mutex) {
+    this.m = m;
+    this.mutex = mutex;
+  }
+  
+  public int size() {
+    synchronized (mutex) { return m.size();
+    } }
+  
+  public boolean isEmpty() { synchronized (mutex) { return m.isEmpty();
+    } }
+  
+  public boolean containsKey(short key) { synchronized (mutex) { return m.containsKey(key);
+    } }
+  
+  public boolean containsValue(short value) { synchronized (mutex) { return m.containsValue(value);
+    } }
+  
+  public short get(short key) { synchronized (mutex) { return m.get(key);
+    }
+  }
+  
+  public short put(short key, short value) { synchronized (mutex) { return m.put(key, value);
+    } }
+  
+  public short remove(short key) { synchronized (mutex) { return m.remove(key);
+    } }
+  
+  public void putAll(Map<? extends Short, ? extends Short> map) { synchronized (mutex) { m.putAll(map);
+    } }
+  
+  public void putAll(TShortShortMap map) { synchronized (mutex) { m.putAll(map);
+    } }
+  
+  public void clear() { synchronized (mutex) { m.clear();
+    } }
+  
+  private transient TShortSet keySet = null;
+  private transient TShortCollection values = null;
+  
+  public TShortSet keySet() {
+    synchronized (mutex) {
+      if (keySet == null)
+        keySet = new TSynchronizedShortSet(m.keySet(), mutex);
+      return keySet;
+    }
+  }
+  
+  public short[] keys() { synchronized (mutex) { return m.keys();
+    } }
+  
+  public short[] keys(short[] array) { synchronized (mutex) { return m.keys(array);
+    }
+  }
+  
+  public TShortCollection valueCollection() { synchronized (mutex) {
+      if (values == null)
+        values = new TSynchronizedShortCollection(m.valueCollection(), mutex);
+      return values;
+    }
+  }
+  
+  public short[] values() { synchronized (mutex) { return m.values();
+    } }
+  
+  public short[] values(short[] array) { synchronized (mutex) { return m.values(array);
+    }
+  }
+  
+  public TShortShortIterator iterator() { return m.iterator(); }
+  
+
+
+  public short getNoEntryKey() { return m.getNoEntryKey(); }
+  public short getNoEntryValue() { return m.getNoEntryValue(); }
+  
+  public short putIfAbsent(short key, short value) {
+    synchronized (mutex) { return m.putIfAbsent(key, value);
+    } }
+  
+  public boolean forEachKey(TShortProcedure procedure) { synchronized (mutex) { return m.forEachKey(procedure);
+    } }
+  
+  public boolean forEachValue(TShortProcedure procedure) { synchronized (mutex) { return m.forEachValue(procedure);
+    } }
+  
+  public boolean forEachEntry(TShortShortProcedure procedure) { synchronized (mutex) { return m.forEachEntry(procedure);
+    } }
+  
+  public void transformValues(TShortFunction function) { synchronized (mutex) { m.transformValues(function);
+    } }
+  
+  public boolean retainEntries(TShortShortProcedure procedure) { synchronized (mutex) { return m.retainEntries(procedure);
+    } }
+  
+  public boolean increment(short key) { synchronized (mutex) { return m.increment(key);
+    } }
+  
+  public boolean adjustValue(short key, short amount) { synchronized (mutex) { return m.adjustValue(key, amount);
+    } }
+  
+  public short adjustOrPutValue(short key, short adjust_amount, short put_amount) { synchronized (mutex) { return m.adjustOrPutValue(key, adjust_amount, put_amount);
+    }
+  }
+  
+  public boolean equals(Object o) { synchronized (mutex) { return m.equals(o);
+    } }
+  
+  public int hashCode() { synchronized (mutex) { return m.hashCode();
+    } }
+  
+  public String toString() { synchronized (mutex) { return m.toString();
+    } }
+  
+  private void writeObject(ObjectOutputStream s) throws IOException { synchronized (mutex) { s.defaultWriteObject();
+    }
+  }
+}
